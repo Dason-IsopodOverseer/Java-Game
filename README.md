@@ -2,13 +2,13 @@
 
 Dear Carter And Emily
 
+BUG IS FIXED! :)
 I've created a new folder in bin called "maps".
 It stores the level layout as a txt file.
 You'll need to download tile images a and b, or make your own.
 I've also provided my luke, which is currently a square.
 
-Currently, any level will be rendered incorrectly.
-The orientation is mirrored, then rotated 90 degrees counterclockwise.
+NOTE THAT THE TILE ARRAY FLIPS THE ORIGINAL LEVEL
 
 For example, the following arrangement
 
@@ -18,7 +18,7 @@ For example, the following arrangement
     BBBB    AAAA
     AAAAAAAAAAAA
 
-Becomes this in the actual game
+Becomes this in tile array
 
       ABA
       ABA
@@ -33,6 +33,6 @@ Becomes this in the actual game
       BAA
       BAA
   
-It is reading each column and then printing it as a row.
-Pls halp.
+It is reading each column and then saving it as a row.
+But in the real game, it will be rendered correctly.
 
