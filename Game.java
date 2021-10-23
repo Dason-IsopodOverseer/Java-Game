@@ -139,10 +139,6 @@ public class Game extends Canvas {
             
             // draw entities and tilemap XXX MAKE THIS A METHOD??
         	
-        	// DASON'S DILEMMA
-        	// I CHANGED HEIGHT AND WIDTH VALUES TO GET IT TO WORK,
-        	// BUT MY DESIRED ORIENTATION IS MIRRORED AND ROTATED 90 DEGREES COUNTERCLOCKWISE
-        	// HEELLLLP
             Sprite tile = null;
     		for (int i = 0; i < map.getHeight(); i++) {
     			for (int j = 0; j < map.getWidth(); j++) {

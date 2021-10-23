@@ -16,20 +16,20 @@ public class TileMap {
 		// also gets width and height
 		mapReader(tileFile);
 		
+		tiles = new Sprite[width][height];
+		
 		// set sprites a and b to corresponding tile images
 		a = (SpriteStore.get()).getSprite("sprites/a.png");
 		b = (SpriteStore.get()).getSprite("sprites/b.png");
-		
-		tiles = new Sprite[height][width];
 		fillMap();
 	}
 	
 	public int getWidth() {
-		return width;
+		return tiles[0].length;
 	}
 	
 	public int getHeight() {
-		return height;
+		return tiles.length;
 	}
 	
 	// get width - tiles.length
@@ -44,25 +44,22 @@ public class TileMap {
 	
 	// fills sprite array with appropriate tiles (based on string [] input)
 	private Sprite[][] fillMap() {
+		
 	    // begin to parse!
-	    for (int y = 0; y < height; y++) {
-	        String line = (String) tileConfig.get(y);
-	        for (int x = 0; x < width; x++) {
-	            char ch = line.charAt(x);
+	    for (int y = 0; y < width; y++) {
+	        for (int x = 0; x < height; x++) {
+	        	String line = (String) tileConfig.get(x);
+	            char ch = line.charAt(y);
 	            
 	            // check if the char represents tile A, B, C, etc.
 				if (ch == 'A') {
-					System.out.print("A");
 					tiles[y][x] = a;
 				} else if (ch == 'B') {
-					System.out.print("B");
 					tiles[y][x] = b;
 				} else {
-					System.out.print(" ");
 					tiles[y][x] = null;
 				}
 	        }
-	        System.out.println();
 	    }
 		return tiles;
 	}
