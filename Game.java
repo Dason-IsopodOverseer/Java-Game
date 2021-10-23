@@ -142,8 +142,7 @@ public class Game extends Canvas {
         	// DASON'S DILEMMA
         	// I CHANGED HEIGHT AND WIDTH VALUES TO GET IT TO WORK,
         	// BUT MY DESIRED ORIENTATION IS MIRRORED AND ROTATED 90 DEGREES COUNTERCLOCKWISE
-        	// I'm confident I have the correct grid of tiles
-        	// not sure if this is a tileMap rendering issue???
+        	// HEELLLLP
             Sprite tile = null;
     		for (int i = 0; i < map.getHeight(); i++) {
     			for (int j = 0; j < map.getWidth(); j++) {
