@@ -18,20 +18,19 @@ For example, the following arrangement
 
 Becomes this in the actual game
 
-    ABA
-    ABA
-    ABA
+      ABA
+      ABA
+      ABA
+      ABA
     AB  A
     AB  A
     AB  A
     AB  A
-    BAA
+      BAA
       BAA
       BAA
       BAA
   
 It is reading each column and then printing it as a row.
-
-
-
+Pls halp.
 
