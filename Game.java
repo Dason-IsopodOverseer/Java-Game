@@ -55,7 +55,6 @@ public class Game extends Canvas {
 		container.setResizable(false);
 		container.setVisible(true);
 
-
         // if user closes window, shutdown game and jre
 		container.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -73,7 +72,7 @@ public class Game extends Canvas {
 		createBufferStrategy(2);
 		strategy = getBufferStrategy();
 
-		luke = new LukeEntity(this, "sprites/luke.png", 0, 32);
+		luke = new LukeEntity(this, "luke", 0, 32);
 		entities.add(luke);
 		//enemy = new KlingonEntity(this, "sprites/luke.jpg",50,0);
 		//entities.add(enemy);
@@ -138,7 +137,6 @@ public class Game extends Canvas {
             } // if
             
             // draw entities and tilemap XXX MAKE THIS A METHOD??
-        	
             Sprite tile = null;
     		for (int i = 0; i < map.getHeight(); i++) {
     			for (int j = 0; j < map.getWidth(); j++) {
@@ -148,7 +146,14 @@ public class Game extends Canvas {
     				}
     			}
     		}
+    		
+    		// update entity animations to account for movement
+            for (int i = 0; i < entities.size(); i++) {
+                Entity entity = (Entity) entities.get(i);
+                entity.updateAnimations();
+            } // for
 
+            // draw entities
             for (int i = 0; i < entities.size(); i++) {
             	Entity entity = (Entity) entities.get(i);
             	entity.draw(g, amountScrolled);
