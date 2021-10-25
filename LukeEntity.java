@@ -2,7 +2,7 @@ public class LukeEntity extends Entity
 {    
     
     public LukeEntity(final Game g, final String r, final int newX, final int newY) {
-        super(r, newX, newY);
+        super(r, newX, newY, true);
         this.game = g;
         this.map = g.getTileMap();
     }
