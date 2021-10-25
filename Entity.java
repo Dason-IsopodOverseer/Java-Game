@@ -24,7 +24,7 @@
     protected int bottom;
     protected TileMap map;
     protected Game game;
-    
+
     // the following variables control animations for this entity
     private boolean animated = false;
 	private String[] moveLeft = new String[1]; // stores an array of images for moving left
@@ -101,7 +101,7 @@
       * input: delta - the amount of time passed in ms
       * output: none
       * purpose: after a certain amout of time has passed,
-      *          update the location as well as the animation
+      *          update the location
       */
      public void move(long delta) {
     	 
@@ -111,24 +111,24 @@
          top = (int) y;
          bottom = top + sprite.getHeight();
          if (dx < 0 && x < 0) {
-             dx = 0;
+             dx = -dx;
          } else if (dx > 0 && x > 950) {
-            dx = 0;
+            dx = -dx;
          } else if (dx < 0 && isTileLeft()) {
-             dx = 0;
+             dx = -dx;
          } else if (dx > 0 && isTileRight()) {
-             dx = 0;
+             dx = -dx;
          }
          if (dy < 0 && isTileAbove()) {
          	dy = 0;
          	game.stopJumping();
-         } else if (isTileBelow() && !game.getJumping()) {
+         } else if (isTileBelow() && (!game.getJumping() || !(this instanceof LukeEntity))) {
              dy = 0;
          }
-     
-		 // update location of entity based ov move speeds
-		 x += (delta * dx) / 1000;
-		 y += (delta * dy) / 1000;
+    	 
+       // update location of entity based ov move speeds
+       x += (delta * dx) / 1000;
+       y += (delta * dy) / 1000;
      } // move
 
      // get and set velocities
@@ -161,19 +161,45 @@
     	 return sprite.getHeight();
      }
      
-     protected abstract boolean isTileAbove();
+     protected boolean isTileAbove() {
+
+         // if entity's top-left or top-right corner is in a tile
+         return map.getTile(right / 96, (top - 1) / 96) != null || map.getTile(left / 96, (top - 1) / 96) != null;
+     }
      
-     public abstract boolean isTileBelow();
+     public boolean isTileBelow() {
+     	
+     	// if entity's bottom-left or bottom-right corner is in a tile
+     	try {
+     		return map.getTile(right / 96, (bottom + 1) / 96) != null || map.getTile(left / 96, (bottom + 1) / 96) != null;
+     	} catch (Exception e) {
+     		return false;
+     	}
+     	
+     }
      
-     protected abstract boolean isTileLeft();
+     protected boolean isTileLeft() {
+         
+     	// if entity's top-left or bottom-left corner is in a tile
+         return map.getTile((left - 1) / 96, top / 96) != null || map.getTile((left - 1) / 96, bottom / 96) != null;
+     }
      
-     protected abstract boolean isTileRight();
+     protected boolean isTileRight() {
+         
+     	// if entity's top-right or bottom-right corner is in a tile
+     	try {
+     		return map.getTile((right + 1) / 96, top / 96) != null || map.getTile((right + 1) / 96, bottom / 96) != null;
+     	} catch (Exception e) {
+     		return true;
+     	}
+     }
+     
 
     /*
      * Draw this entity to the graphics object provided at (x,y)
      */
      public void draw (Graphics g, double translateY) {
-    	 sprite.draw(g,(int)x,(int) (y + translateY));
+       sprite.draw(g,(int)x,(int) (y + translateY));
      }  // draw
      
     /* Do the logic associated with this entity.  This method

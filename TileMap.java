@@ -4,7 +4,7 @@ import java.util.ArrayList; // import the ArrayList class
 public class TileMap {
 
 	private Sprite[][] tiles;
-	private ArrayList tileConfig = new ArrayList(); // stores the configuration of different tiles after being read by mapReader
+	public ArrayList tileConfig = new ArrayList(); // stores the configuration of different tiles after being read by mapReader
 	private Sprite a;
 	private Sprite b;
 	private int height = 0; // stores the height of the map

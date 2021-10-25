@@ -1,49 +1,35 @@
-/*
-public class KlingonEntity extends Entity {
-	private Game game; // the game in which the ship exists
-*/
-	  /* construct the player character
-	   * input: game - the game in which the ship is being created
-	   *        r - a string with the name of the image associated to
-	   *              the sprite for the ship
-	   *        x, y - initial location of luke
-	   */
-/*
-	  public KlingonEntity(Game g, String r, int newX, int newY) {
-	    super(r, newX, newY);  // calls the constructor in Entity
-	    game = g;
-	    dx = 30;
-
-	  } */ // constructor
-
-	  /* move
-	   * input: delta - time elapsed since last move (ms)
-	   * purpose: move the klingon 
-	   */
-/*
-	  public void move (long delta){
-	    if (game.enemyOnPlatform(this)) {
-	    	dy = 0;
-	    } else {
-	    	dy = 160;
-	    } // else
-	    
-	    super.move(delta);  // calls the move method in Entity
-	    
-	    if (!game.enemyOnPlatform(this)) {
-	    	dx = -dx; // turn around
-	    	super.move(delta); // go back before being drawn
-	    } // if
-	  } // move
-*/
-	  /* collidedWith
-	   * input: other - the entity with which the ship has collided
-	   * purpose: notification that the player's ship has collided
-	   *          with something
-	   */
-/*
-	   public void collidedWith(Entity other) {
-	    
-	   } // collidedWith    
-} // class KlingonEntity
-*/
+public class KlingonEntity extends Entity {    
+    private int speed = 50;
+    private final int fallingSpeed = 100;
+	
+    public KlingonEntity(final Game g, final String r, final int newX, final int newY) {
+        super(r, newX, newY, true);
+        game = g;
+        map = g.getTileMap();
+        dx = speed;
+    }
+    
+    public void move(long delta) {
+    	dy = fallingSpeed;
+    	super.move(delta);
+    	
+    	// check if this entity should turn around
+		if (isTileBelow() && !isTileCompletelyBelow()) {
+			dx = -dx;
+			x += (delta * dx) / 500;
+		}
+    } // move
+    
+    private boolean isTileCompletelyBelow() {
+    	
+    	// if entity's bottom-left or bottom-right corner is in a tile
+     	try {
+     		return map.getTile(right / 40, (bottom + 1) / 40) != null && map.getTile(left / 40, (bottom + 1) / 40) != null;
+     	} catch (Exception e) {
+     		return false;
+     	}
+    } // isTileCompletelyBelow
+    
+    public void collidedWith(final Entity other) {
+    }
+}
