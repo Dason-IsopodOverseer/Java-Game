@@ -6,32 +6,41 @@ import java.util.ArrayList;
 
 public class Game extends Canvas {
 	private BufferStrategy strategy;   // take advantage of accelerated graphics
+	
 	private boolean leftPressed = false;  // true if left arrow key currently pressed
     private boolean rightPressed = false; // true if right arrow key currently pressed
     protected boolean upPressed = false; // true if up arrow key currently pressed
+    private boolean attackPressed = false; // true if attack key (spacebar) currently pressed
+    
     public final int GAMEWIDTH = 960; // width in px of game window
     public final int GAMEHEIGHT = 480; // height in px of game window
-    //public final int SCALEFACTOR = 3; // scale factor for sprites
-    private int lvl = 1;
+    private int levelHeight = 1920; // height of the first "level" of the game
+    private int newLevelHeight = 0; // XXX can probably remove this
     
-    public ArrayList entities = new ArrayList(); // list of entities
-    private double moveSpeed = 400;
-
-    public Entity luke;
-    public Entity enemy;
-    private boolean inFreefall = true; // true when luke is falling and moving down
-    private int jumpTarget;
-    private boolean jumping = false; // true when luke is "falling", but moving up
     private double amountScrolled = 0; // constantly increases to make the platforms rise
     private double scrollSpeed = -50; // speed that amountScrolled increases at
     private boolean superScroll = false; // when luke is in the bottom 2/10 of the screen, scroll faster
     private boolean scrolling = true;
     
-    private int levelHeight = 1920; // height of the first "level" of the game
-    private int newLevelHeight = 0; // XXX can probably remove this
+    private int lvl = 1;
+    private int attackInterval = 500;
+    private int attackDuration = 300;
     
-    private boolean facingRight = true;
-    private TileMap map = new TileMap("level1.txt");
+    public ArrayList<Entity> entities = new ArrayList(); // list of entities
+    public ArrayList<Entity> deadEnemies = new ArrayList();
+    private double moveSpeed = 400;
+    public Entity luke;
+    public Entity enemy;
+    
+    private boolean inFreefall = true; // true when luke is falling and moving down
+    private int jumpTarget;
+    private boolean jumping = false; // true when luke is "falling", but moving up
+    //private boolean facingRight = true;
+    public int health = 3;
+    public int deathToll = 0;
+    private long lastAttack = 0;
+    
+    private TileMap map = new TileMap("level1.txt", this);
     
     /*
 	 * Construct our game and set it running.
@@ -80,10 +89,10 @@ public class Game extends Canvas {
 
 		luke = new LukeEntity(this, "luke", 0, 0);
 		entities.add(luke);
-		//enemy = new KlingonEntity(this, "sprites/luke.jpg",50,0);
-		//entities.add(enemy);
-		// loadLvlMap();
-		//map = 
+		for (int i = 0; i < entities.size(); i++) {
+			entities.get(i).setMap();
+		}
+		
 
 		// start the game
 		gameLoop();
@@ -111,19 +120,14 @@ public class Game extends Canvas {
             g.fillRect(0,0,GAMEWIDTH,GAMEHEIGHT);
             
 		
-            //g.scale(SCALEFACTOR, SCALEFACTOR);
+            // remove dead entities
+            entities.removeAll(deadEnemies);
 
             // move entities
             for (int i = 0; i < entities.size(); i++) {
                 Entity entity = (Entity) entities.get(i);
                 entity.move(delta);
             } // for
-
-            // check if level is over
-            /*if (luke.getY() > levelHeight) {
-            	goToNextLevel(lastLoopTime);
-            } // if
-            */
            
             // check superScroll
             if ((luke.getY() + amountScrolled > (GAMEHEIGHT * 0.6) && scrollSpeed != 0)) {
@@ -143,40 +147,29 @@ public class Game extends Canvas {
 	            	amountScrolled += (scrollSpeed * delta) / 1000;
 	            } // else
 	            
-	            System.out.println(levelHeight);
-	            System.out.println();
+	           
 	            if ((levelHeight - GAMEHEIGHT) + amountScrolled < 5) {
-	            	
-	        		System.out.println("STOP");
 	        		scrolling = false;
 	        		
 	        	}
             }
-            //System.out.println(amountScrolled);
-            //System.out.println(-(320 - (GAMEHEIGHT / SCALEFACTOR)));
-            
-            //scrollSpeed += delta / 10000;
         	
             if ((luke.getY() + amountScrolled) < 0 && luke.isTileBelow()) {
             	lose();
             } // if
         	
-            // draw entities and tilemap XXX MAKE THIS A METHOD??
             Sprite tile = null;
             int topY = (int) amountScrolled / -96;
-            //System.out.println("top" + topY);
             int bottomY = (GAMEHEIGHT / 96) + topY;
-            //System.out.println("bottom" + bottomY);
-    		for (int i = 0; i < map.getHeight(); i++) { // XXX map.getwidth instead of 10
-    			//System.out.println(i);
+    		for (int i = 0; i < map.getWidth(); i++) { 
     			for (int j = topY; j <= bottomY; j++) {
-    				//System.out.println(j);
     				tile = map.getTile(i, j);
     				if (tile != null) {
     					tile.draw(g, (i * 96), (int)(j * 96 + amountScrolled));
     				}
     			}
     		}
+    		
     		
     		// update entity animations to account for movement
             for (int i = 0; i < entities.size(); i++) {
@@ -189,13 +182,18 @@ public class Game extends Canvas {
             	Entity entity = (Entity) entities.get(i);
             	entity.draw(g, amountScrolled);
             }
-
-            // collisions
-            /*
-            if (luke.collidesWith(enemy)) {
-            	luke.collidedWith(enemy);
-            }
-            */
+            
+            for (int i = 0; i < entities.size(); i++) {
+    	        if (entities.get(i).collidesWith(luke) && entities.get(i) != luke) {
+    	        	if (luke.attacking) {
+    	        		deadEnemies.add(entities.get(i));
+    	        	}
+    	        	else {
+    	        		luke.collidedWith(entities.get(i));
+    	        	}
+    	        }
+    	    }
+            
             // check if luke should be moving vertically
            
             if (jumping) {
@@ -207,7 +205,7 @@ public class Game extends Canvas {
             	
             } else { 
 	        	inFreefall = true;
-            } // else XXX
+            } // else
            
             // clear graphics and flip buffer
             g.dispose();
@@ -233,9 +231,23 @@ public class Game extends Canvas {
  				inFreefall = false;
  			} // if
  			
+ 			if (attackPressed && (System.currentTimeMillis() - lastAttack > attackInterval)) {
+ 				lastAttack = System.currentTimeMillis();
+ 				luke.attacking = true;
+ 			}
+ 			
+ 			if (System.currentTimeMillis() - lastAttack > attackDuration) {
+ 				luke.attacking = false; 
+ 			}
+ 			
+ 			// see if luke is dead
+ 			if (health == 0) {
+ 				lose();
+ 			}
+ 			
  			// if luke is at the bottom region of the level
  			if (luke.y > (levelHeight - 200)) {
-	 			if (((LukeEntity) luke).getTileDirectlyBelow() == 'n') {
+	 			if (((LukeEntity) luke).getTileDirectlyBelow() == 'N') {
 	 				lvl++;
 	 				goToNextLevel(lastLoopTime);
 	 				((LukeEntity) luke).setMap(map);
@@ -247,18 +259,6 @@ public class Game extends Canvas {
 	} // gameLoop
 	
 	private void goToNextLevel(long lastLoopTime) {
-		
-		
-		// calc. time since last update, will be used to calculate
-        // entities movement
-       // long delta = System.currentTimeMillis() - lastLoopTime;
-       // lastLoopTime = System.currentTimeMillis();
-        
-        // move luke offscreen
-     	//luke.setVerticalMovement(200);
-        //luke.move(delta);
-        
-		//if (luke.y > levelHeight) {
 			
             // get graphics context for the accelerated surface and make it black
             Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
@@ -270,7 +270,9 @@ public class Game extends Canvas {
             amountScrolled = 0;
             
             luke.x = 0;
-            luke.y = 96;
+            luke.y = 0;
+            
+            //attacking = false;
             
             //clear graphics and flip buffer
             g.dispose();
@@ -299,12 +301,18 @@ public class Game extends Canvas {
 	
 	private void loadLvlMap() {
 		if (lvl == 1) {
-			map = new TileMap("level1.txt");
+			map = new TileMap("level1.txt", this);
 			levelHeight = map.getHeight() * 96;
+			for (int i = 0; i < entities.size(); i++) {
+				entities.get(i).setMap();
+			}
 		}
 		else if (lvl == 2) {
-			map = new TileMap("level2.txt");
+			map = new TileMap("level2.txt", this);
 			levelHeight = map.getHeight() * 96;
+			for (int i = 0; i < entities.size(); i++) {
+				entities.get(i).setMap();
+			}
 		}
 		else if (lvl == 3) {
 			
@@ -326,32 +334,40 @@ public class Game extends Canvas {
 	         
 	         // respond to move left, right or fire
 	         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-	           leftPressed = true;
+	        	 leftPressed = true;
 	         } // if
 	
 	         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-	           rightPressed = true;
+	        	 rightPressed = true;
 	         } // if
 	       
 	         if (e.getKeyCode() == KeyEvent.VK_UP) {
-	       	  upPressed = true;
+	       	  	upPressed = true;
 	         } // if
+	         
+	         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+	        	 attackPressed = true;
+	         }
         } // keyPressed
 
         public void keyReleased(KeyEvent e) {
 	         
 	         // respond to move left, right or fire
 	         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-	           leftPressed = false;
+	        	 leftPressed = false;
 	         } // if
 	
 	         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-	           rightPressed = false;
+	        	 rightPressed = false;
 	         } // if
 	
 	         if (e.getKeyCode() == KeyEvent.VK_UP) {
-	       	  upPressed = false;
+	       	  	upPressed = false;
 	         } // if
+	         
+	         if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+	        	 attackPressed = false;
+	         }
 		} // keyReleased
 
 	    public void keyTyped(KeyEvent e) {

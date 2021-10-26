@@ -24,12 +24,15 @@
     protected int bottom;
     protected TileMap map;
     protected Game game;
+    
+    public boolean attacking = false;
 
     // the following variables control animations for this entity
     private boolean animated = false;
-	private String[] moveLeft = new String[1]; // stores an array of images for moving left
-	private String[] moveRight = new String[1]; // stores an array of images for moving right
-	private String[] jump = new String[1]; // stores an array of images for jumping
+	private String[] moveLeft = new String[3]; // stores an array of images for moving left
+	private String[] moveRight = new String[3]; // stores an array of images for moving right
+	private String[] jump = new String[3]; // stores an array of images for jumping
+	private String[] attack = new String[3]; // stores an array of images for attacking
 	private boolean isFacingRight = true; // true if sprite is facing right
 	private int index = 0; // index of frame sprite is on
     
@@ -54,7 +57,7 @@
      } // constructor
      
      /* determines and sets entity animation variables
-      * direction of entity
+      * selects direction of entity
       * selects correct image to use
       */
      private void setAnimations(String entityName) {
@@ -74,6 +77,11 @@
     		 jump[i] = "sprites/" + entityName + "U" + i + ".png";
     	 }
     	 sprite = (SpriteStore.get()).getSprite(moveRight[0]);
+    	 
+    	 // configure all attack images
+    	 for (int i = 0; i < attack.length; i++) {
+    		 attack[i] = "sprites/" + entityName + "AT" + i + ".png";
+    	 }
      }
     
      /* Takes an entity state (jumping, moving, attacking) and
@@ -81,22 +89,34 @@
       * 
       */
      public void updateAnimations() {
-    	 if (animated) {
+    	 index++;
+    	 if (index > (moveRight.length - 1) * 300) {
+    		 index = 0;
+    	 }
+    	 if (index % 300 == 0 && animated) {
+    		 
+    		 int frame = index / 300;
              // update direction
-    		 if (dy < 0) {
-    			 sprite = (SpriteStore.get()).getSprite(jump[0]);
+			 if (this.attacking) {
+				 sprite = (SpriteStore.get()).getSprite(attack[0]);
+			 } else if (dy < 0) {
+    			 sprite = (SpriteStore.get()).getSprite(jump[frame]);
     		 } else {
     			 if (dx < 0) {
-        			 // isFacingRight = false;
-        			 sprite = (SpriteStore.get()).getSprite(moveLeft[0]);
+        			 isFacingRight = false;
+        			 sprite = (SpriteStore.get()).getSprite(moveLeft[frame]);
         		 } else if (dx > 0) {
-        			 // isFacingRight = true;
-        			 sprite = (SpriteStore.get()).getSprite(moveRight[0]);
-        		 } 
-    		 }
+        			 isFacingRight = true;
+        			 sprite = (SpriteStore.get()).getSprite(moveRight[frame]); 
+        		 } else {
+        			 String idle =  isFacingRight ? moveRight[0] : moveLeft[0];
+        			 sprite = (SpriteStore.get()).getSprite(idle);
+        		 }
+    		 } // else
     	 }
      }
 
+     public void setMap() {}
      /* move
       * input: delta - the amount of time passed in ms
       * output: none
@@ -159,6 +179,10 @@
      
      public int getHeight() {
     	 return sprite.getHeight();
+     }
+     
+     public int getWidth() {
+    	 return sprite.getWidth();
      }
      
      protected boolean isTileAbove() {

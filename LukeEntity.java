@@ -1,5 +1,5 @@
 public class LukeEntity extends Entity
-{    
+{   
     
     public LukeEntity(final Game g, final String r, final int newX, final int newY) {
         super(r, newX, newY, true);
@@ -45,18 +45,30 @@ public class LukeEntity extends Entity
     }
     
     public void collidedWith(final Entity other) {
-    	if (other instanceof KlingonEntity) {
-    		game.lose();
+    	if (other instanceof EnemyEntity ) {
+    		game.health--;
+    		// if luke is touching the enemy's left
+    		if (Math.abs(x + this.getWidth() - other.x) < 1) {
+    			x = Math.max(other.x - this.getWidth() - 50, 1);
+    		}
+    		// if luke is touching the enemy's right
+    		else {
+    			x = Math.min(other.x + other.getWidth() + 50, 960 - this.getWidth() - 1);
+    		}
+    		
+    		System.out.println(game.health);
     	}
     }
     
     protected char getTileDirectlyBelow() {
-    	String s = "";
+    	String s = "test";
     	if (map.getTile(right / 96, (bottom + 1) / 96) != null && map.getTile(left / 96, (bottom + 1) / 96) != null) {
-    		if (map.getTile(right / 96, (bottom + 1) / 96) == map.getTile(left / 96, (bottom + 1) / 96))
-    		s = (String) map.tileConfig.get((bottom + 1) /96);
-    		return s.charAt(right / 96);
+    		if (map.getTile(right / 96, (bottom + 1) / 96) == map.getTile(left / 96, (bottom + 1) / 96)) {
+    			s = map.tileConfig.get((bottom + 1) / 96);
+	    		return s.charAt(right / 96);
+    		}
     	}
     	return 'x';
     }
+   
 }

@@ -1,8 +1,8 @@
-public class KlingonEntity extends EnemyEntity
-{    
-    protected final int speed = 50;
+
+public class BorgEntity extends EnemyEntity {
+	private final int speed = 50;
 	
-    public KlingonEntity(final Game g, final String r, final int newX, final int newY) {
+    public BorgEntity(final Game g, final String r, final int newX, final int newY) {
         super(g, r, newX, newY, 50);
     }
     
@@ -10,7 +10,7 @@ public class KlingonEntity extends EnemyEntity
     	super.move(delta);
     	
     	// check if this entity should turn around
-		if (isTileBelow() && !isTileCompletelyBelow() && (game.luke.getY() <= y)) {
+		if (isTileBelow() && !isTileCompletelyBelow()) {
 			dx = -dx;
 			x += (delta * dx) / 500;
 		} // if

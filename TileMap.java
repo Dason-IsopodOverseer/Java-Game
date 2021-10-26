@@ -4,32 +4,36 @@ import java.util.ArrayList; // import the ArrayList class
 public class TileMap {
 
 	private Sprite[][] tiles;
-	public ArrayList tileConfig = new ArrayList(); // stores the configuration of different tiles after being read by mapReader
+	public ArrayList<String> tileConfig = new ArrayList(); // stores the configuration of different tiles after being read by mapReader
 	private Sprite a;
 	private Sprite b;
+	private Sprite n;
+	private Game game;
 	private int height = 0; // stores the height of the map
 	private int width = 0; // stores the width of the map
 	
-	public TileMap(String tileFile) {
+	public TileMap(String tileFile, Game g) {
 		
 		// read the txt tileFile and populate the empty tileConfig arraylist
 		// also gets width and height
 		mapReader(tileFile);
+		game = g;
 		
 		tiles = new Sprite[width][height];
 		
 		// set sprites a and b to corresponding tile images
 		a = (SpriteStore.get()).getSprite("sprites/a.png");
 		b = (SpriteStore.get()).getSprite("sprites/b.png");
+		n = (SpriteStore.get()).getSprite("sprites/n.gif");
 		fillMap();
 	}
 	
 	public int getWidth() {
-		return tiles[0].length;
+		return tiles.length;
 	}
 	
 	public int getHeight() {
-		return tiles.length;
+		return tiles[0].length;
 	}
 	
 	// get width - tiles.length
@@ -46,18 +50,27 @@ public class TileMap {
 	private Sprite[][] fillMap() {
 		
 	    // begin to parse!
-	    for (int y = 0; y < width; y++) {
-	        for (int x = 0; x < height; x++) {
-	        	String line = (String) tileConfig.get(x);
-	            char ch = line.charAt(y);
+	    for (int y = 0; y < height; y++) {
+	        for (int x = 0; x < width; x++) {
+	        	String line = tileConfig.get(y);
+	            char ch = line.charAt(x);
 	            
 	            // check if the char represents tile A, B, C, etc.
 				if (ch == 'A') {
-					tiles[y][x] = a;
+					tiles[x][y] = a;
 				} else if (ch == 'B') {
-					tiles[y][x] = b;
-				} else {
-					tiles[y][x] = null;
+					tiles[x][y] = b;
+				} else if (ch == 'N') {
+					tiles[x][y] = n;
+				} else if (ch == 'k') {
+					tiles[x][y] = null;
+					game.entities.add(new KlingonEntity(game, "kling", (x * 96 - 96), (y * 96 + 19)));
+				} else if (ch == 'b') {
+					tiles[x][y] = null;
+					game.entities.add(new BorgEntity(game, "borg", (x * 96 - 96), (y * 96 + 19)));
+				}
+				else {
+					tiles[x][y] = null;
 				}
 	        }
 	    }
