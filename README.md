@@ -1,6 +1,4 @@
 # Java-Game
-Eidted files: Everything, pretty much
-
 Dear Carter And Emily
 
 BUG IS FIXED! :)
@@ -36,4 +34,9 @@ Becomes this in tile array
   
 It is reading each column and then saving it as a row.
 But in the real game, it will be rendered correctly.
+
+# KNOWN BUGS
+1 - Enemy stuck on edge of block when falling off (cause unknown)
+2 - Luke rapidly flips direction at the start of game if you run into wall (cause unknown). Only appears at start of game. All other walls work fine.
+3 - Luke clips through the floor tiles and will realign himself if he falls. (suspected to be caused by player entering keyboard command before game has properly loaded)
 
