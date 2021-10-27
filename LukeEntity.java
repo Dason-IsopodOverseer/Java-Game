@@ -47,13 +47,33 @@ public class LukeEntity extends Entity
     public void collidedWith(final Entity other) {
     	if (other instanceof EnemyEntity ) {
     		game.health--;
-    		// if luke is touching the enemy's left
-    		if (Math.abs(x + this.getWidth() - other.x) < 1) {
-    			x = Math.max(other.x - this.getWidth() - 50, 1);
+    		// if luke is on the enemy's left
+    		if (x + (this.getWidth() / 2) < other.x + (other.getWidth() / 2)) {
+    			// if luke would hit left edge
+    			if (x - 50 < 1) {
+    				x = 1;
+    			}
+    			// if luke would hit a tile to the left
+    			else if (map.getTile(((int) x - 50) / 96, bottom / 96) != null) {
+    				x = ((int) (x - 50) / 96 * 96) + 96;
+    			}
+    			else {
+    				x = x - 50;
+    			}
     		}
-    		// if luke is touching the enemy's right
+    		// if luke is on the enemy's right
     		else {
-    			x = Math.min(other.x + other.getWidth() + 50, 960 - this.getWidth() - 1);
+    			// if luke would hit right edge
+    			if (other.x + other.getWidth() + 50 > 960 - this.getWidth() - 1) {
+    				x = 960 - this.getWidth() - 1;
+    			}
+    			// if luke would hit a tile
+    			else if (map.getTile(((int) other.x + other.getWidth() + 50) / 96, bottom / 96) != null) {
+    				x = (int) (other.x + other.getWidth() + 50) / 96 * 96;
+    			}
+    			else {
+    				x = other.x + other.getWidth() + 50;
+    			}
     		}
     		
     		System.out.println(game.health);

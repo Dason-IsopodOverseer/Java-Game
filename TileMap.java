@@ -74,6 +74,10 @@ public class TileMap {
 				}
 	        }
 	    }
+	    for (int y = 0; y < height; y++) {
+	    	
+	    }
+	    System.out.println();
 		return tiles;
 	}
 	

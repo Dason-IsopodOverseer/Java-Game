@@ -9,10 +9,10 @@
 # MAKE SURE NO ROGUE SPACES, OR ELSE GAME BREAKS!!!
      AAAAA
        BBB
-BBB    AAA
+BBB       
 AABBB   b 
      BBBB 
-A       k 
+A         
 AAA   AAAA
 BBB   BB B
 BBB B  AA 

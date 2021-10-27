@@ -18,7 +18,7 @@ public class Game extends Canvas {
     private int newLevelHeight = 0; // XXX can probably remove this
     
     private double amountScrolled = 0; // constantly increases to make the platforms rise
-    private double scrollSpeed = -50; // speed that amountScrolled increases at
+    private double scrollSpeed = -20; // speed that amountScrolled increases at
     private boolean superScroll = false; // when luke is in the bottom 2/10 of the screen, scroll faster
     private boolean scrolling = true;
     
@@ -28,7 +28,7 @@ public class Game extends Canvas {
     
     public ArrayList<Entity> entities = new ArrayList(); // list of entities
     public ArrayList<Entity> deadEnemies = new ArrayList();
-    private double moveSpeed = 400;
+    private double moveSpeed = 300;
     public Entity luke;
     public Entity enemy;
     
@@ -92,7 +92,6 @@ public class Game extends Canvas {
 		for (int i = 0; i < entities.size(); i++) {
 			entities.get(i).setMap();
 		}
-		
 
 		// start the game
 		gameLoop();
