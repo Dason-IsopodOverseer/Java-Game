@@ -13,7 +13,7 @@ public class AnimatedEntity extends Entity {
 	public Image image;  // the image to be drawn for this sprite
 	
 	public AnimatedEntity(String r, int newX, int newY) {
-		super(r, newX, newY);
+		super(r, newX, newY, true);
 	}
 	
 	public void updateAnimation() {
