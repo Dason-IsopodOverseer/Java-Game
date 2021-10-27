@@ -38,7 +38,7 @@ But in the real game, it will be rendered correctly.
 # KNOWN BUGS
 1 - Enemy stuck on edge of block when falling off (cause unknown)
 
-2 - Luke rapidly flips direction at the start of game if you run into wall (cause unknown). Only appears at start of game. All other walls work fine.
+2 - Luke rapidly flips direction at the start of game if you run into wall (cause unknown). Only appears at start of game. All other walls work fine. Dason will work on this.
 
-3 - Luke clips through the floor tile at start of game and will realign himself if he falls. Only happens if player inputs no keyboard commands.
+3 - Luke sometimes clips through the floor tile at start of game and will realign himself if he falls. (cause unknown, but seems related to input commands)
 
