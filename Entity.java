@@ -35,12 +35,15 @@
 	private String[] attack = new String[3]; // stores an array of images for attacking
 	private boolean isFacingRight = true; // true if sprite is facing right
 	private int frame = 0; // stores the specific frame the game is on (refreshes every 600 frames)
+	
+	 // higher values result in slower FPS
+	 int refreshRate = 600;
     
     private Rectangle me = new Rectangle(); // bounding rectangle of
                                             // this entity
     private Rectangle him = new Rectangle(); // bounding rect. of other
                                              // entities
-                                             
+    
     /* Constructor
      * input: reference to the image for this entity,
      *        initial x and y location to be drawn at
@@ -84,6 +87,7 @@
     	 
     	 // configure initial state of entity
     	 sprite = (SpriteStore.get()).getSprite(moveRight[0]);
+    	 isFacingRight = true;
      }
     
      /* Takes an entity state (jumping, moving, attacking) and
@@ -91,9 +95,6 @@
       * 
       */
      public void updateAnimations() {
-    	 
-    	 // higher values result in slower FPS
-    	 int refreshRate = 600;
     	 frame++;
     	 if (frame > (moveRight.length) * refreshRate) {
     		 frame = 0;
@@ -107,10 +108,10 @@
 			 } else if (dy < 0) {
     			 sprite = (SpriteStore.get()).getSprite(jump[index]);
     		 } else {
-    			 if (dx < 0) {
+    			 if (dx < 0 && !isTileRight()) {
         			 isFacingRight = false;
         			 sprite = (SpriteStore.get()).getSprite(moveLeft[index]);
-        		 } else if (dx > 0) {
+        		 } else if (dx > 0 && !isTileLeft()) {
         			 isFacingRight = true;
         			 sprite = (SpriteStore.get()).getSprite(moveRight[index]); 
         		 } else {
