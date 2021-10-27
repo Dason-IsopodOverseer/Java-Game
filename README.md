@@ -42,3 +42,5 @@ But in the real game, it will be rendered correctly.
 
 3 - Luke sometimes clips through the floor tile at start of game and will realign himself if he falls. (cause unknown, but seems related to user inputing commands before the game properly loads. Potential solution is to make keyboard inputs null until the map is finished loading!)
 
+4 - Luke sometimes clips through the floor tile at start of game EVEN IF NO KEYBOARD INPUT IS DETECTED. (cause unknown, but perhaps loading luke after the tilemap is finished loading will solve it?)
+
