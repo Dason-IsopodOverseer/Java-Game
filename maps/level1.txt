@@ -10,13 +10,13 @@
      AAAAA
        BBB
 BBB    AAA
-AABBB     
+AABBB   b 
      BBBB 
-A         
+A       k 
 AAA   AAAA
 BBB   BB B
 BBB B  AA 
-A         
+A k       
 BBBBBBB  A
 BBBAABB  A
 BBAAAAA  A
@@ -26,4 +26,4 @@ BBBBBB   B
 BBBBBB  AA
 A         
 BBB AA  A 
-AAAAAAAAAA
+AAAAAAANAA

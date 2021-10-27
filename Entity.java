@@ -34,7 +34,7 @@
 	private String[] jump = new String[3]; // stores an array of images for jumping
 	private String[] attack = new String[3]; // stores an array of images for attacking
 	private boolean isFacingRight = true; // true if sprite is facing right
-	private int index = 0; // index of frame sprite is on
+	private int frame = 0; // stores the specific frame the game is on (refreshes every 600 frames)
     
     private Rectangle me = new Rectangle(); // bounding rectangle of
                                             // this entity
@@ -64,24 +64,26 @@
     	 
     	 // configure all moveLeft images
     	 for (int i = 0; i < moveLeft.length; i++) {
-    		 moveLeft[i] = "sprites/" + entityName + "L" + i + ".png";
+    		 moveLeft[i] = "sprites/" + entityName + "/L" + i + ".png";
     	 }
     	 
     	 // configure all moveRight images
     	 for (int i = 0; i < moveRight.length; i++) {
-    		 moveRight[i] = "sprites/" + entityName + "R" + i + ".png";
+    		 moveRight[i] = "sprites/" + entityName + "/R" + i + ".png";
     	 }
     	 
     	// configure all moveUp images
     	 for (int i = 0; i < jump.length; i++) {
-    		 jump[i] = "sprites/" + entityName + "U" + i + ".png";
+    		 jump[i] = "sprites/" + entityName + "/U" + i + ".png";
     	 }
-    	 sprite = (SpriteStore.get()).getSprite(moveRight[0]);
     	 
     	 // configure all attack images
     	 for (int i = 0; i < attack.length; i++) {
-    		 attack[i] = "sprites/" + entityName + "AT" + i + ".png";
+    		 attack[i] = "sprites/" + entityName + "/AT" + i + ".png";
     	 }
+    	 
+    	 // configure initial state of entity
+    	 sprite = (SpriteStore.get()).getSprite(moveRight[0]);
      }
     
      /* Takes an entity state (jumping, moving, attacking) and
@@ -89,25 +91,28 @@
       * 
       */
      public void updateAnimations() {
-    	 index++;
-    	 if (index > (moveRight.length - 1) * 300) {
-    		 index = 0;
+    	 
+    	 // higher values result in slower FPS
+    	 int refreshRate = 600;
+    	 frame++;
+    	 if (frame > (moveRight.length) * refreshRate) {
+    		 frame = 0;
     	 }
-    	 if (index % 300 == 0 && animated) {
+    	 if (frame != 0 && (frame - refreshRate) % refreshRate == 0 && animated) {
+    		 int index = (frame - refreshRate) / refreshRate;
     		 
-    		 int frame = index / 300;
              // update direction
 			 if (this.attacking) {
 				 sprite = (SpriteStore.get()).getSprite(attack[0]);
 			 } else if (dy < 0) {
-    			 sprite = (SpriteStore.get()).getSprite(jump[frame]);
+    			 sprite = (SpriteStore.get()).getSprite(jump[index]);
     		 } else {
     			 if (dx < 0) {
         			 isFacingRight = false;
-        			 sprite = (SpriteStore.get()).getSprite(moveLeft[frame]);
+        			 sprite = (SpriteStore.get()).getSprite(moveLeft[index]);
         		 } else if (dx > 0) {
         			 isFacingRight = true;
-        			 sprite = (SpriteStore.get()).getSprite(moveRight[frame]); 
+        			 sprite = (SpriteStore.get()).getSprite(moveRight[index]); 
         		 } else {
         			 String idle =  isFacingRight ? moveRight[0] : moveLeft[0];
         			 sprite = (SpriteStore.get()).getSprite(idle);
