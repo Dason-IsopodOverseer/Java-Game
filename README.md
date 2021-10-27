@@ -1,5 +1,5 @@
 # Java-Game
-Eidted files: Entity, Game, TileMap
+Eidted files: Everything, pretty much
 
 Dear Carter And Emily
 
