@@ -40,7 +40,3 @@ But in the real game, it will be rendered correctly.
 
 2 - Luke rapidly flips direction at the start of game if you run into wall (cause unknown). Only appears at start of game. All other walls work fine. Dason will work on this.
 
-3 - Luke sometimes clips through the floor tile at start of game and will realign himself if he falls. Player input is also inverted when this happens. (cause unknown, but seems related to user inputing commands before the game properly loads. Potential solution is to make keyboard inputs null until the map is finished loading!)
-
-4 - Luke sometimes clips through the floor tile at start of game EVEN IF NO KEYBOARD INPUT IS DETECTED. Player input is also inverted when this happens. (cause unknown, but perhaps only loading luke after the tilemap is finished loading will solve it?)
-
