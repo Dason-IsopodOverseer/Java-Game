@@ -5,12 +5,12 @@ public class TileMap {
 
 	private Sprite[][] tiles;
 	public ArrayList<String> tileConfig = new ArrayList(); // stores the configuration of different tiles after being read by mapReader
-	private Sprite a;
-	private Sprite b;
-	private Sprite n;
+	private Sprite a, b, c, d, e, f, g, n;
 	private Game game;
 	private int height = 0; // stores the height of the map
 	private int width = 0; // stores the width of the map
+	
+	private int tileSize = 50;
 	
 	public TileMap(String tileFile, Game g) {
 		
@@ -24,6 +24,7 @@ public class TileMap {
 		// set sprites a and b to corresponding tile images
 		a = (SpriteStore.get()).getSprite("sprites/a.png");
 		b = (SpriteStore.get()).getSprite("sprites/b.png");
+		c = (SpriteStore.get()).getSprite("sprites/c.png");
 		n = (SpriteStore.get()).getSprite("sprites/n.gif");
 		fillMap();
 	}
@@ -39,7 +40,7 @@ public class TileMap {
 	// get width - tiles.length
 	// get height - tiles[0].length
 	public Sprite getTile(int x, int y) {
-			return tiles[x][y];
+		return tiles[x][y];
 	}
 	
 	public void setTile(int x, int y, Sprite tile) {
@@ -55,29 +56,36 @@ public class TileMap {
 	        	String line = tileConfig.get(y);
 	            char ch = line.charAt(x);
 	            
-	            // check if the char represents tile A, B, C, etc.
+	            // check if the char represents tile A, B, N, etc.
 				if (ch == 'A') {
 					tiles[x][y] = a;
 				} else if (ch == 'B') {
 					tiles[x][y] = b;
+				} else if (ch == 'C') {
+					tiles[x][y] = c;
 				} else if (ch == 'N') {
 					tiles[x][y] = n;
 				} else if (ch == 'k') {
 					tiles[x][y] = null;
-					game.entities.add(new KlingonEntity(game, "kling", (x * 96 - 96), (y * 96 + 19)));
+					game.entities.add(new KlingonEntity(game, "kling", (x * tileSize), (y * tileSize + 25)));
+				} else if (ch == 'w') {
+					tiles[x][y] = null;
+					game.entities.add(new KlingonEntity(game, "warrior", (x * tileSize), (y * tileSize + 25)));
+				} else if (ch == 'm') {
+					tiles[x][y] = null;
+					game.entities.add(new KlingonEntity(game, "master", (x * tileSize), (y * tileSize + 25)));
 				} else if (ch == 'b') {
 					tiles[x][y] = null;
-					game.entities.add(new BorgEntity(game, "borg", (x * 96 - 96), (y * 96 + 19)));
-				}
+					game.entities.add(new BorgEntity(game, "borg", (x * tileSize), (y * tileSize + 25)));
+				} else if (ch == 'q') {
+					tiles[x][y] = null;
+					game.entities.add(new BorgEntity(game, "queen", (x * tileSize), (y * tileSize + 25)));
+				} 
 				else {
 					tiles[x][y] = null;
 				}
 	        }
 	    }
-	    for (int y = 0; y < height; y++) {
-	    	
-	    }
-	    System.out.println();
 		return tiles;
 	}
 	
@@ -112,6 +120,11 @@ public class TileMap {
 		        
 		        // add every line except for comments
 		        if (!line.startsWith("#")) {
+		        	
+		        	// * makes an entire row empty
+		        	if (line.startsWith("*")) {
+		        		line = "                                "; // 32 spaces
+		        	}
 		            tileConfig.add(line);
 		            
 		            // set the width

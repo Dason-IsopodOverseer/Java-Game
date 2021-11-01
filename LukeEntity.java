@@ -11,42 +11,8 @@ public class LukeEntity extends Entity
     	map = m;
     }
     
-    protected boolean isTileAbove() {
-
-        // if luke's top-left or top-right corner is in a tile
-        return map.getTile(right / 96, (top - 1) / 96) != null || map.getTile(left / 96, (top - 1) / 96) != null;
-    }
-    
-    public boolean isTileBelow() {
-    	
-    	// if luke's bottom-left or bottom-right corner is in a tile
-    	try {
-    		return map.getTile(right / 96, (bottom + 1) / 96) != null || map.getTile(left / 96, (bottom + 1) / 96) != null;
-    	} catch (Exception e) {
-    		return false;
-    	}
-    	
-    }
-    
-    protected boolean isTileLeft() {
-        
-    	// if luke's top-left or bottom-left corner is in a tile
-        return map.getTile((left - 1) / 96, top / 96) != null || map.getTile((left - 1) / 96, bottom / 96) != null;
-    }
-    
-    protected boolean isTileRight() {
-        
-    	// if luke's top-right or bottom-right corner is in a tile
-    	try {
-    		return map.getTile((right + 1) / 96, top / 96) != null || map.getTile((right + 1) / 96, bottom / 96) != null;
-    	} catch (Exception e) {
-    		return true;
-    	}
-    }
-    
     public void collidedWith(final Entity other) {
     	if (other instanceof EnemyEntity ) {
-    		game.health--;
     		// if luke is on the enemy's left
     		if (x + (this.getWidth() / 2) < other.x + (other.getWidth() / 2)) {
     			// if luke would hit left edge
@@ -54,8 +20,8 @@ public class LukeEntity extends Entity
     				x = 1;
     			}
     			// if luke would hit a tile to the left
-    			else if (map.getTile(((int) x - 50) / 96, bottom / 96) != null) {
-    				x = ((int) (x - 50) / 96 * 96) + 96;
+    			else if (map.getTile(((int) x - 51) / tileSize, bottom / tileSize) != null) {
+    				x = ((int) (x - 50) / tileSize * tileSize) + tileSize;
     			}
     			else {
     				x = x - 50;
@@ -64,31 +30,30 @@ public class LukeEntity extends Entity
     		// if luke is on the enemy's right
     		else {
     			// if luke would hit right edge
-    			if (other.x + other.getWidth() + 50 > 960 - this.getWidth() - 1) {
-    				x = 960 - this.getWidth() - 1;
+    			if (other.x + other.getWidth() + 51 > (tileSize * mapWidth - 10) - this.getWidth() - 1) {
+    				x = (tileSize * mapWidth - 10) - this.getWidth() - 1;
     			}
     			// if luke would hit a tile
-    			else if (map.getTile(((int) other.x + other.getWidth() + 50) / 96, bottom / 96) != null) {
-    				x = (int) (other.x + other.getWidth() + 50) / 96 * 96;
+    			else if (map.getTile(((int) other.x + other.getWidth() + 51) / tileSize, bottom / tileSize) != null) {
+    				x = (int) (other.x + other.getWidth() + 50) / tileSize * tileSize;
     			}
     			else {
     				x = other.x + other.getWidth() + 50;
     			}
     		}
     		
-    		System.out.println(game.health);
+    		//System.out.println(game.health);
     	}
     }
     
     protected char getTileDirectlyBelow() {
     	String s = "test";
-    	if (map.getTile(right / 96, (bottom + 1) / 96) != null && map.getTile(left / 96, (bottom + 1) / 96) != null) {
-    		if (map.getTile(right / 96, (bottom + 1) / 96) == map.getTile(left / 96, (bottom + 1) / 96)) {
-    			s = map.tileConfig.get((bottom + 1) / 96);
-	    		return s.charAt(right / 96);
+    	if (map.getTile(right / tileSize, (bottom + 1) / tileSize) != null && map.getTile(left / tileSize, (bottom + 1) / tileSize) != null) {
+    		if (map.getTile(right / tileSize, (bottom + 1) / tileSize) == map.getTile(left / tileSize, (bottom + 1) / tileSize)) {
+    			s = map.tileConfig.get((bottom + 1) / tileSize);
+	    		return s.charAt(right / tileSize);
     		}
     	}
     	return 'x';
     }
-   
 }
